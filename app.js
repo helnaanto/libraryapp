@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const signup = express.Router();
 const home = express.Router();
-const port = process.env.PORT || 2000;
+const port = process.env.PORT || 3000;
 
 const navbar = [
     {
@@ -12,6 +12,7 @@ const navbar = [
         link:'/signup',name:'Signup'
     }
 ];
+
 const image = [
     {
         img:'img.jpg'
@@ -31,7 +32,7 @@ const nav = [
         link:'/authors',name:'Author'
     },
     {
-        link:'/add',name:'Add'
+        link:'/admin',name:'Add'
     },
     {
         link:'/',name:'Log out'
@@ -40,32 +41,27 @@ const nav = [
 
 const booksRouter = require('./src/routes/bookRoutes')(nav);
 const authorsRouter = require('./src/routes/authorRoutes')(nav);
-const addRouter = require('./src/routes/addRoutes')(nav);
+const adminRouter = require('./src/routes/adminRoutes')(nav);
+const signupRouter = require('./src/routes/signupRouter')(navbar);
 
+
+app.use(express.urlencoded({extended:true}));
 app.use(express.static('./public'));
 app.set('view engine','ejs');
 app.set('views','./src/views');
-app.use('/signup',signup);
+app.use('/signup',signupRouter);
 app.use('/home',home);
 app.use('/books',booksRouter);
 app.use('/authors',authorsRouter);
-app.use('/add',addRouter);
+app.use('/admin',adminRouter);
 
-app.get('/',function(rea,res){
-    res.render("index",
-    {
+app.get('/',function(req,res){
+    res.render("index",{
         navbar,
-        title:'Library'
+        title:'Library',
     });
 });
 
-signup.get('/',function(rea,res){
-    res.render("signup",
-    {
-        navbar,
-        title:'Library'
-    });
-});
 home.get('/',function(rea,res){
     res.render("home",
     {

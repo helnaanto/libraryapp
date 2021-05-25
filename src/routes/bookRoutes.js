@@ -1,37 +1,70 @@
 const express = require('express');
 const booksRouter = express.Router();
+const Bookdata = require('../model/bookdata');
 function router(nav){
-    var books = [
-        {
-            title: 'Tom and Jerry',
-            author: 'Joseph Barbera',
-            genre: 'Cartoon',
-            img: 'tom_jerry.jpg'
-        },
-        {
-            title: 'Harry Potter',
-            author: 'J K Rowling',
-            genre: 'Fantasy',
-            img: 'harry.jpg'
-        }
-    ]
+    // var books = [
+    //     {
+    //         title: 'Tom and Jerry',
+    //         author: 'Joseph Barbera',
+    //         genre: 'Cartoon',
+    //         img: 'tom_jerry.jpg'
+    //     },
+    //     {
+    //         title: 'Harry Potter',
+    //         author: 'J K Rowling',
+    //         genre: 'Fantasy',
+    //         img: 'harry.jpg'
+    //     }
+    // ]
     
     booksRouter.get('/',function(req,res){
-        res.render("books",{
-            nav,
-            title:'Library',
-            books
+        Bookdata.find()
+        .then(function(books){
+            res.render("books",{
+                nav,
+                title:'Library',
+                books
+            });
         });
-    });
+    })
     
     booksRouter.get('/:id', function(req,res){
-        const id = req.params.id
-        res.render('book',{
-            nav,
-            title:'Library',
-            book : books[id]
+        const id = req.params.id;
+        Bookdata.findOne({_id: id})
+        .then(function(book){
+            res.render('book',{
+                nav,
+                title:'Library',
+                book
+            });
         });
     });
+    booksRouter.get('/delete', function(req,res){
+    booksRouter.get('/:id', function(req,res){
+        const id = req.params.id;
+        Bookdata.findByIdAndDelete({_id: id})
+        .then(function(books){
+            res.render('books',{
+                nav,
+                title:'Library',
+                book
+            });
+        });
+    });
+    })
+    booksRouter.get('/update', function(req,res){
+        booksRouter.get('/:id', function(req,res){
+            const id = req.params.id;
+            Bookdata.findByIdAndUpdate({_id: id})
+            .then(function(books){
+                res.render('books',{
+                    nav,
+                    title:'Library',
+                    book
+                });
+            });
+        });
+        })
     return booksRouter;
 }
 
